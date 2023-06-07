@@ -15,10 +15,4 @@ public interface CategoryRepository {
     void getCategories(Callback<List<Category>> callback);
 
     void insertCategoriesForNewUser(String userId);
-
-    interface Callback<T> {
-        void onSuccess();
-        void onSuccess(T result);
-        void onFailure(String message);
-    }
 }
