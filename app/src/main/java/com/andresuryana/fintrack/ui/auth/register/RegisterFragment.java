@@ -14,8 +14,6 @@ import androidx.navigation.Navigation;
 
 import com.andresuryana.fintrack.R;
 import com.andresuryana.fintrack.data.model.User;
-import com.andresuryana.fintrack.data.prefs.SessionHelper;
-import com.andresuryana.fintrack.data.prefs.SessionHelperImpl;
 import com.andresuryana.fintrack.databinding.FragmentRegisterBinding;
 import com.andresuryana.fintrack.ui.base.BaseFragment;
 import com.andresuryana.fintrack.util.StringUtil;
@@ -43,8 +41,7 @@ public class RegisterFragment extends BaseFragment implements RegisterView {
         binding = FragmentRegisterBinding.inflate(inflater);
 
         // Init presenter
-        SessionHelper session = new SessionHelperImpl(requireContext());
-        presenter = new RegisterPresenter(session, this);
+        presenter = new RegisterPresenter(requireContext(), this);
 
         // Get nav controller
         navController = Navigation.findNavController(requireActivity(), R.id.fragmentContainerView);
