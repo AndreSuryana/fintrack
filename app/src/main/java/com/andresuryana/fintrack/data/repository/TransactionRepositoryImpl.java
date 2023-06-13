@@ -40,7 +40,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             // Push new transaction into the references
             userTransactionRef.push().getRef().setValue(transaction);
 
-            callback.onSuccess();
+            callback.onSuccess(null);
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
         }
@@ -57,7 +57,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             transactionRef.removeValue((error, ref) -> {
                 if (error == null) {
                     // Transaction removed successfully
-                    callback.onSuccess();
+                    callback.onSuccess(null);
                 } else {
                     // Error occurred while removing the transaction
                     callback.onFailure(error.getMessage());
@@ -81,7 +81,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             transactionRef.setValue(transaction, (error, ref) -> {
                 if (error == null) {
                     // Transaction updated successfully
-                    callback.onSuccess();
+                    callback.onSuccess(null);
                 } else {
                     // Error occurred while updating the transaction
                     callback.onFailure(error.getMessage());
