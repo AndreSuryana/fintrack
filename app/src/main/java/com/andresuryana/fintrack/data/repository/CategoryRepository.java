@@ -6,11 +6,11 @@ import java.util.List;
 
 public interface CategoryRepository {
 
-    void addCategory(Category category, Callback<Void> callback);
+    void addCategory(Category category, Callback<Category> callback);
 
-    void removeCategory(Category category, Callback<Void> callback);
+    void removeCategory(Category category, Callback<Category> callback);
 
-    void updateCategory(String categoryUid, Category category, Callback<Void> callback);
+    void updateCategory(String categoryUid, Category category, Callback<Category> callback);
 
     void getCategories(Callback<List<Category>> callback);
 

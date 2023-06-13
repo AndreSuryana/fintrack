@@ -31,7 +31,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
 
 
     @Override
-    public void addCategory(Category category, Callback<Void> callback) {
+    public void addCategory(Category category, Callback<Category> callback) {
         try {
             // Specify current user categories references
             DatabaseReference userCategoryRef = categoryRef.child(userId);
@@ -39,14 +39,14 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             // Push new category into the references
             userCategoryRef.push().getRef().setValue(category);
 
-            callback.onSuccess();
+            callback.onSuccess(category);
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
         }
     }
 
     @Override
-    public void removeCategory(Category category, Callback<Void> callback) {
+    public void removeCategory(Category category, Callback<Category> callback) {
         try {
             // Specify current user categories references
             DatabaseReference userCategoryRef = categoryRef.child(userId);
@@ -56,7 +56,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             categoryRef.removeValue((error, ref) -> {
                 if (error == null) {
                     // Category removed successfully
-                    callback.onSuccess();
+                    callback.onSuccess(category);
                 } else {
                     // Error occurred while removing the category
                     callback.onFailure(error.getMessage());
@@ -68,7 +68,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     }
 
     @Override
-    public void updateCategory(String categoryUid, Category category, Callback<Void> callback) {
+    public void updateCategory(String categoryUid, Category category, Callback<Category> callback) {
         try {
             // Specify current user categories reference
             DatabaseReference userCategoryRef = categoryRef.child(userId);
@@ -80,7 +80,7 @@ public class CategoryRepositoryImpl implements CategoryRepository {
             categoryRef.setValue(category, (error, ref) -> {
                 if (error == null) {
                     // Category updated successfully
-                    callback.onSuccess();
+                    callback.onSuccess(category);
                 } else {
                     // Error occurred while updating the category
                     callback.onFailure(error.getMessage());

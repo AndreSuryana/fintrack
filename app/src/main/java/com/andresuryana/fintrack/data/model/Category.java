@@ -20,6 +20,12 @@ public class Category {
         this.iconRes = iconRes;
     }
 
+    public Category(String uid, String name, int iconRes) {
+        this.uid = uid;
+        this.name = name;
+        this.iconRes = iconRes;
+    }
+
     public static List<Category> getDefaultCategories() {
         List<Category> categories = new ArrayList<>();
 
