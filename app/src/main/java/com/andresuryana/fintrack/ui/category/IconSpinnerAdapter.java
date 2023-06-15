@@ -1,6 +1,7 @@
 package com.andresuryana.fintrack.ui.category;
 
 import android.content.Context;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,14 +13,17 @@ import androidx.annotation.Nullable;
 import com.andresuryana.fintrack.databinding.ItemIconCategoryBinding;
 
 import java.util.List;
+import java.util.Objects;
 
-public class IconSpinnerAdapter extends ArrayAdapter<Integer> {
+public class IconSpinnerAdapter extends ArrayAdapter<Pair<String, Integer>> {
 
     private final LayoutInflater inflater;
+    private final List<Pair<String, Integer>> icons;
 
-    public IconSpinnerAdapter(Context context, List<Integer> icons) {
+    public IconSpinnerAdapter(Context context, List<Pair<String, Integer>> icons) {
         super(context, 0, icons);
         this.inflater = LayoutInflater.from(context);
+        this.icons = icons;
     }
 
     @NonNull
@@ -33,30 +37,21 @@ public class IconSpinnerAdapter extends ArrayAdapter<Integer> {
         return createView(position, parent);
     }
 
-    private View createView(int position, ViewGroup parent) {
-//        ImageView imageView;
-//        if (convertView == null) {
-//            convertView = inflater.inflate(R.layout.item_icon_category, parent, false);
-//            imageView = convertView.findViewById(R.id.iv_icon);
-//            convertView.setTag(imageView);
-//        } else {
-//            imageView = (ImageView) convertView.getTag();
-//        }
-//
-//        Integer drawableResId = getItem(position);
-//
-//        if (drawableResId != null) {
-//            Drawable icon = getContext().getResources().getDrawable(drawableResId);
-//            imageView.setImageDrawable(icon);
-//        }
-//
-//        return convertView;
+    public int getPositionByName(String iconName) {
+        for (Pair<String, Integer> pair : this.icons) {
+            if (Objects.equals(pair.first, iconName)) {
+                return getPosition(pair);
+            }
+        }
+        return NO_SELECTION;
+    }
 
+    private View createView(int position, ViewGroup parent) {
         // Inflate layout
         ItemIconCategoryBinding binding = ItemIconCategoryBinding.inflate(inflater, parent, false);
         
         // Set icon drawable according to the position
-        binding.ivIcon.setImageResource(getItem(position));
+        binding.ivIcon.setImageResource(getItem(position).second);
 
         return binding.getRoot();
     }

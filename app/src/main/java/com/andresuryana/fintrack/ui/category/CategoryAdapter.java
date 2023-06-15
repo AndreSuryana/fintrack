@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.andresuryana.fintrack.data.model.Category;
 import com.andresuryana.fintrack.databinding.ItemCategoryBinding;
+import com.andresuryana.fintrack.util.IconUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         }
 
         public void onBind(Category category) {
-            binding.categoryIcon.setImageResource(category.getIconRes());
+            binding.categoryIcon.setImageDrawable(IconUtil.getIconByName(itemView.getContext(), category.getIconName()));
             binding.categoryName.setText(category.getName());
             binding.getRoot().setClickable(true);
             binding.getRoot().setOnClickListener(this);

@@ -1,6 +1,6 @@
 package com.andresuryana.fintrack.data.model;
 
-import com.andresuryana.fintrack.R;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,31 +9,37 @@ public class Category {
 
     private String uid;
     private String name;
-    private int iconRes;
+    private String iconName;
 
     public Category() {
         // Default constructor
     }
 
-    public Category(String name, int iconRes) {
+    public Category(String name, String iconName) {
         this.name = name;
-        this.iconRes = iconRes;
+        this.iconName = iconName;
     }
 
-    public Category(String uid, String name, int iconRes) {
+    public Category(String uid, String name, String iconName) {
         this.uid = uid;
         this.name = name;
-        this.iconRes = iconRes;
+        this.iconName = iconName;
+    }
+
+    @NonNull
+    @Override
+    public String toString() {
+        return this.name;
     }
 
     public static List<Category> getDefaultCategories() {
         List<Category> categories = new ArrayList<>();
 
-        categories.add(new Category("Food & Dining", R.drawable.ic_local_dining));
-        categories.add(new Category("Transportation", R.drawable.ic_directions_car));
-        categories.add(new Category("House Expenses", R.drawable.ic_house));
-        categories.add(new Category("Shopping", R.drawable.ic_shopping_cart));
-        categories.add(new Category("Education", R.drawable.ic_school));
+        categories.add(new Category("Food & Dining", "ic_local_dining"));
+        categories.add(new Category("Transportation", "ic_directions_car"));
+        categories.add(new Category("House Expenses", "ic_house"));
+        categories.add(new Category("Shopping", "ic_shopping_cart"));
+        categories.add(new Category("Education", "ic_school"));
 
         return categories;
     }
@@ -54,11 +60,11 @@ public class Category {
         this.name = name;
     }
 
-    public int getIconRes() {
-        return iconRes;
+    public String getIconName() {
+        return iconName;
     }
 
-    public void setIconRes(int iconRes) {
-        this.iconRes = iconRes;
+    public void setIconName(String iconName) {
+        this.iconName = iconName;
     }
 }

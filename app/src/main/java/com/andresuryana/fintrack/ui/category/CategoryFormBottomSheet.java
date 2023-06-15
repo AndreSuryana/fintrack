@@ -1,5 +1,7 @@
 package com.andresuryana.fintrack.ui.category;
 
+import static com.andresuryana.fintrack.util.IconUtil.getIconResources;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,8 +19,6 @@ import com.andresuryana.fintrack.databinding.BottomSheetAddCategoryBinding;
 import com.andresuryana.fintrack.util.StringUtil;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
@@ -28,9 +28,6 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
 
     // Layout state
     private final LayoutState layoutState;
-
-    // List of icons
-    private final List<Integer> iconResources;
 
     // Adapter
     IconSpinnerAdapter iconAdapter;
@@ -43,18 +40,16 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
     private OnModifyResultCallback onModifyResultCallback;
 
     public CategoryFormBottomSheet(Context context, OnAddResultCallback onAddResultCallback) {
-        this.iconResources = getIconResources();
         this.onAddResultCallback = onAddResultCallback;
         this.layoutState = LayoutState.ADD_CATEGORY;
-        this.iconAdapter = new IconSpinnerAdapter(context, iconResources);
+        this.iconAdapter = new IconSpinnerAdapter(context, getIconResources());
     }
 
     public CategoryFormBottomSheet(Context context, Category category, OnModifyResultCallback onModifyResultCallback) {
-        this.iconResources = getIconResources();
         this.category = category;
         this.onModifyResultCallback = onModifyResultCallback;
         this.layoutState = LayoutState.MODIFY_CATEGORY;
-        this.iconAdapter = new IconSpinnerAdapter(context, iconResources);
+        this.iconAdapter = new IconSpinnerAdapter(context, getIconResources());
     }
 
     @Nullable
@@ -106,11 +101,11 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
             boolean isCategoryNameError = binding.tilCategoryName.getError() != null;
 
             // Get value
-            Integer iconRes = iconAdapter.getItem(binding.spinnerIcon.getSelectedItemPosition());
+            String iconName = iconAdapter.getItem(binding.spinnerIcon.getSelectedItemPosition()).first;
             String categoryName = Objects.requireNonNull(binding.etCategoryName.getText()).toString();
 
-            if (!isCategoryNameError && iconRes != null) {
-                onAddResultCallback.onSuccess(iconRes, categoryName);
+            if (!isCategoryNameError && iconName != null) {
+                onAddResultCallback.onSuccess(iconName, categoryName);
                 dismiss();
             } else {
                 onAddResultCallback.onFailed(getString(R.string.error_check_input));
@@ -128,7 +123,7 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
 
         // Prefill category data
         if (category != null) {
-            binding.spinnerIcon.setSelection(iconAdapter.getPosition(category.getIconRes()));
+            binding.spinnerIcon.setSelection(iconAdapter.getPositionByName(category.getIconName()));
             binding.etCategoryName.setText(category.getName());
         }
 
@@ -141,11 +136,11 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
             boolean isCategoryNameError = binding.tilCategoryName.getError() != null;
 
             // Get value
-            Integer iconRes = iconAdapter.getItem(binding.spinnerIcon.getSelectedItemPosition());
+            String iconName = iconAdapter.getItem(binding.spinnerIcon.getSelectedItemPosition()).first;
             String categoryName = Objects.requireNonNull(binding.etCategoryName.getText()).toString();
 
-            if (!isCategoryNameError && iconRes != null) {
-                onModifyResultCallback.onEdit(category, iconRes, categoryName);
+            if (!isCategoryNameError && iconName != null) {
+                onModifyResultCallback.onEdit(category, iconName, categoryName);
                 dismiss();
             } else {
                 onModifyResultCallback.onFailed(getString(R.string.error_check_input));
@@ -208,28 +203,13 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
         });
     }
 
-    private List<Integer> getIconResources() {
-        List<Integer> icons = new ArrayList<>();
-        icons.add(R.drawable.ic_attach_money);
-        icons.add(R.drawable.ic_local_dining);
-        icons.add(R.drawable.ic_directions_car);
-        icons.add(R.drawable.ic_shopping_cart);
-        icons.add(R.drawable.ic_house);
-        icons.add(R.drawable.ic_school);
-        icons.add(R.drawable.ic_account_circle);
-        icons.add(R.drawable.ic_fitness_center);
-        icons.add(R.drawable.ic_flight);
-        icons.add(R.drawable.ic_work);
-        return icons;
-    }
-
     public interface OnAddResultCallback {
-        void onSuccess(Integer iconRes, String categoryName);
+        void onSuccess(String iconName, String categoryName);
         void onFailed(String message);
     }
 
     public interface OnModifyResultCallback {
-        void onEdit(Category oldCategory, Integer iconRes, String categoryName);
+        void onEdit(Category oldCategory, String iconName, String categoryName);
         void onDelete(Category category);
         void onFailed(String message);
     }

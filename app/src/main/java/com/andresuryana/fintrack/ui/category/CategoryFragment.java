@@ -80,8 +80,8 @@ public class CategoryFragment extends BaseFragment implements CategoryView {
         // Show bottom sheet add category
         CategoryFormBottomSheet addCategoryDialog = new CategoryFormBottomSheet(requireContext(), new CategoryFormBottomSheet.OnAddResultCallback() {
             @Override
-            public void onSuccess(Integer iconRes, String categoryName) {
-                presenter.addCategory(categoryName, iconRes);
+            public void onSuccess(String iconName, String categoryName) {
+                presenter.addCategory(categoryName, iconName);
             }
 
             @Override
@@ -99,8 +99,8 @@ public class CategoryFragment extends BaseFragment implements CategoryView {
         // Show bottom sheet edit category
         CategoryFormBottomSheet modifyCategoryDialog = new CategoryFormBottomSheet(requireContext(), category, new CategoryFormBottomSheet.OnModifyResultCallback() {
             @Override
-            public void onEdit(Category oldCategory, Integer iconRes, String categoryName) {
-                presenter.updateCategory(oldCategory, categoryName, iconRes);
+            public void onEdit(Category oldCategory, String iconName, String categoryName) {
+                presenter.updateCategory(oldCategory, categoryName, iconName);
             }
 
             @Override

@@ -2,8 +2,6 @@ package com.andresuryana.fintrack.ui.category;
 
 import android.content.Context;
 
-import androidx.annotation.DrawableRes;
-
 import com.andresuryana.fintrack.R;
 import com.andresuryana.fintrack.data.model.Category;
 import com.andresuryana.fintrack.data.repository.Callback;
@@ -24,12 +22,12 @@ public class CategoryPresenter {
         this.repository = new CategoryRepositoryImpl(context);
     }
 
-    void addCategory(String name, @DrawableRes int iconRes) {
+    void addCategory(String name, String iconName) {
         try {
             if (name.isEmpty()) {
                 view.showErrorMessage("Category name should not be empty");
             } else {
-                Category category = new Category(name, iconRes);
+                Category category = new Category(name, iconName);
                 repository.addCategory(category, new Callback<Category>() {
                     @Override
                     public void onSuccess(Category result) {
@@ -48,9 +46,9 @@ public class CategoryPresenter {
         }
     }
 
-    void updateCategory(Category oldCategory, String newName, @DrawableRes int newIconRes) {
+    void updateCategory(Category oldCategory, String newName, String newIconName) {
         try {
-            Category newCategory = new Category(oldCategory.getUid(), newName, newIconRes);
+            Category newCategory = new Category(oldCategory.getUid(), newName, newIconName);
             repository.updateCategory(oldCategory.getUid(), newCategory, new Callback<Category>() {
                 @Override
                 public void onSuccess(Category result) {
