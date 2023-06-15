@@ -228,10 +228,16 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
         if (transaction != null) {
             selectedTransactionType = transaction.getType();
             binding.acTransactionType.setText(transaction.getType().toString());
-            int categoryPosition = categoryAdapter.getPosition(getCategoryByUid(transaction.getCategoryName()));
-            Category category = categoryAdapter.getItem(categoryPosition);
-            selectedCategory = category;
-            binding.acCategory.setText(category.getName());
+            if (transaction.getType() == Transaction.Type.OUTCOME) {
+                // Only set category info if transaction type is OUTCOME
+                int categoryPosition = categoryAdapter.getPosition(getCategoryByUid(transaction.getCategoryName()));
+                Category category = categoryAdapter.getItem(categoryPosition);
+                selectedCategory = category;
+                binding.acCategory.setText(category.getName());
+            } else {
+                // Hide category dropdown if INCOME
+                binding.tilCategory.setVisibility(View.GONE);
+            }
             binding.etTransactionTitle.setText(transaction.getTitle());
             binding.etTransactionAmount.setText(formatRupiah(transaction.getAmount()));
             binding.etTransactionDate.setText(formatDate(transaction.getDate(), DATE_PATTERN));
