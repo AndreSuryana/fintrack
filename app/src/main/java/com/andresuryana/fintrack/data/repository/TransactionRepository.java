@@ -9,11 +9,11 @@ import java.util.List;
 
 public interface TransactionRepository {
 
-    void addTransaction(Transaction transaction, Callback<Void> callback);
+    void addTransaction(Transaction transaction, Callback<Transaction> callback);
 
-    void removeTransaction(Transaction transaction, Callback<Void> callback);
+    void removeTransaction(Transaction transaction, Callback<Transaction> callback);
 
-    void updateTransaction(String transactionUid, Transaction transaction, Callback<Void> callback);
+    void updateTransaction(String transactionUid, Transaction transaction, Callback<Transaction> callback);
 
     void getTransactions(@Nullable Category category, Callback<List<Transaction>> callback);
 }

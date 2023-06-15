@@ -32,7 +32,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    public void addTransaction(Transaction transaction, Callback<Void> callback) {
+    public void addTransaction(Transaction transaction, Callback<Transaction> callback) {
         try {
             // Specify current user transactions references
             DatabaseReference userTransactionRef = transactionRef.child(userId);
@@ -40,14 +40,14 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             // Push new transaction into the references
             userTransactionRef.push().getRef().setValue(transaction);
 
-            callback.onSuccess(null);
+            callback.onSuccess(transaction);
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
         }
     }
 
     @Override
-    public void removeTransaction(Transaction transaction, Callback<Void> callback) {
+    public void removeTransaction(Transaction transaction, Callback<Transaction> callback) {
         try {
             // Specify current user categories references
             DatabaseReference userTransactionRef = transactionRef.child(userId);
@@ -57,7 +57,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             transactionRef.removeValue((error, ref) -> {
                 if (error == null) {
                     // Transaction removed successfully
-                    callback.onSuccess(null);
+                    callback.onSuccess(transaction);
                 } else {
                     // Error occurred while removing the transaction
                     callback.onFailure(error.getMessage());
@@ -69,7 +69,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    public void updateTransaction(String transactionUid, Transaction transaction, Callback<Void> callback) {
+    public void updateTransaction(String transactionUid, Transaction transaction, Callback<Transaction> callback) {
         try {
             // Specify current user transactions reference
             DatabaseReference userTransactionRef = transactionRef.child(userId);
@@ -81,7 +81,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             transactionRef.setValue(transaction, (error, ref) -> {
                 if (error == null) {
                     // Transaction updated successfully
-                    callback.onSuccess(null);
+                    callback.onSuccess(transaction);
                 } else {
                     // Error occurred while updating the transaction
                     callback.onFailure(error.getMessage());

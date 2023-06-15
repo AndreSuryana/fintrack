@@ -13,12 +13,20 @@
     <string name="title_profile">Profile</string>
     <string name="title_add_category">Add Category</string>
     <string name="title_modify_category">Modify Category</string>
+    <string name="title_add_transaction">Add Transaction</string>
+    <string name="title_modify_transaction">Modify Transaction</string>
 
     <!-- Hint & Helper -->
     <string name="hint_user_name">Name</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="hint_category_name">Category Name</string>
+    <string name="hint_transaction_type">Select Transaction Type</string>
+    <string name="hint_transaction_title">Title</string>
+    <string name="hint_transaction_notes">Notes (Optional)</string>
+    <string name="hint_transaction_amount">Amount</string>
+    <string name="hint_transaction_date">Date</string>
+    <string name="hint_transaction_category">Select Category</string>
     <string name="helper_empty_email">Email should not be empty</string>
     <string name="helper_invalid_email">The given email is invalid</string>
     <string name="helper_empty_password">Password should not be empty</string>
@@ -27,6 +35,10 @@
     <string name="helper_invalid_user_name">The given name must not contains any number or special characters</string>
     <string name="helper_empty_category_name">Category name should not be empty</string>
     <string name="helper_invalid_category_name">The given category name must not contains any number or special characters</string>
+    <string name="helper_empty_transaction_type">Transaction type must be selected</string>
+    <string name="helper_empty_transaction_category">Transaction category must be selected</string>
+    <string name="helper_empty_transaction_title">Transaction title should not be empty</string>
+    <string name="helper_invalid_transaction_title">The given title must not contains any number or special characters</string>
 
     <!-- Button -->
     <string name="btn_register">Register</string>
@@ -34,10 +46,12 @@
     <string name="btn_add_category">Add Category</string>
     <string name="btn_delete">Delete</string>
     <string name="btn_edit">Edit</string>
+    <string name="btn_add_transaction">Add Transaction</string>
 
     <!-- Placeholders Text -->
     <string name="text_register">Don\'t have an account?</string>
     <string name="text_login">Already have an account?</string>
+    <string name="coming_soon">Coming Soon</string>
 
     <!-- Message -->
     <string name="success_register">Your account has been registered</string>
@@ -45,11 +59,17 @@
     <string name="success_add_category">You have successfully added a new category \'%s\'</string>
     <string name="success_update_category">You have successfully updated the \'%s\' category</string>
     <string name="success_remove_category">You have successfully removed the category \'%s\'</string>
+    <string name="success_add_transaction">You have successfully added a new transaction \'%s\'</string>
+    <string name="success_update_transaction">You have successfully updated the \'%s\' transaction</string>
+    <string name="success_remove_transaction">You have successfully removed the transaction \'%s\'</string>
 
     <string name="error_check_input">Please check your input</string>
     <string name="error_category_not_found">Category not found</string>
+    <string name="error_transaction_not_found">Transaction not found</string>
 
     <!-- Content Description -->
     <string name="desc_category_icon">Category Icon</string>
+    <string name="desc_transaction_icon">Transaction Icon</string>
+    <string name="desc_transaction_type_icon">Transaction Type Icon</string>
 
 </resources>

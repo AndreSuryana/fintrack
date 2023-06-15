@@ -9,7 +9,7 @@ import com.andresuryana.fintrack.ui.analytic.AnalyticFragment;
 import com.andresuryana.fintrack.ui.category.CategoryFragment;
 import com.andresuryana.fintrack.ui.dashboard.DashboardFragment;
 import com.andresuryana.fintrack.ui.profile.ProfileFragment;
-import com.andresuryana.fintrack.ui.transaction.list.TransactionFragment;
+import com.andresuryana.fintrack.ui.transaction.TransactionFragment;
 
 import java.util.ArrayList;
 import java.util.List;
