@@ -19,6 +19,9 @@
     <string name="title_outcome">Outcome</string>
     <string name="title_remainder">Remainder</string>
     <string name="title_last_transaction">Last Transaction</string>
+    <string name="title_greet">Hi %s!</string>
+    <string name="title_greet_alt">Hello!</string>
+    <string name="subtitle_greet">Take control of your financial journey now</string>
 
     <!-- Hint & Helper -->
     <string name="hint_user_name">Name</string>

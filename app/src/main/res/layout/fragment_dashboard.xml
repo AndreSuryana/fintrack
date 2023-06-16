@@ -16,13 +16,34 @@
             android:orientation="vertical"
             android:paddingVertical="16dp">
 
+            <!-- Greetings -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_greeting_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:textColor="@color/colorPrimary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_greeting_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:text="@string/subtitle_greet"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <!-- Dashboard Card -->
             <include
                 android:id="@+id/card_dashboard"
                 layout="@layout/card_dashboard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp" />
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp" />
 
             <!-- Last Transactions -->
             <com.google.android.material.textview.MaterialTextView

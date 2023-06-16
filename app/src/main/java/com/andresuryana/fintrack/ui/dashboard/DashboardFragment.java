@@ -9,13 +9,16 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 
 import com.andresuryana.fintrack.R;
+import com.andresuryana.fintrack.data.model.DashboardInfo;
 import com.andresuryana.fintrack.data.model.Transaction;
 import com.andresuryana.fintrack.databinding.FragmentDashboardBinding;
 import com.andresuryana.fintrack.ui.base.BaseFragment;
 import com.andresuryana.fintrack.ui.transaction.TransactionAdapter;
 import com.andresuryana.fintrack.util.StringUtil;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DashboardFragment extends BaseFragment implements DashboardView {
 
@@ -41,8 +44,12 @@ public class DashboardFragment extends BaseFragment implements DashboardView {
         presenter = new DashboardPresenter(requireContext(), this);
 
         // Setup adapter & recycler view
-        adapter = new TransactionAdapter(transaction -> {});
+        adapter = new TransactionAdapter(transaction -> {
+        });
         binding.rvTransactions.setAdapter(adapter);
+
+        // Greetings
+        setGreetings();
 
         // Setup refresh layout
         binding.getRoot().setOnRefreshListener(() -> {
@@ -67,15 +74,15 @@ public class DashboardFragment extends BaseFragment implements DashboardView {
     }
 
     @Override
-    public void onLoadDashboardInfo(long income, long outcome) {
+    public void onLoadDashboardInfo(DashboardInfo info) {
         // Format data
         String currencySymbol = "Rp";
-        String incomeString = StringUtil.formatRupiah(income).replace(currencySymbol, "");
-        String outcomeString = StringUtil.formatRupiah(outcome).replace(currencySymbol, "");
-        String remainderString = StringUtil.formatRupiah(Math.abs(income - outcome));
+        String incomeString = StringUtil.formatRupiah(info.getIncome()).replace(currencySymbol, "");
+        String outcomeString = StringUtil.formatRupiah(info.getOutcome()).replace(currencySymbol, "");
+        String remainderString = StringUtil.formatRupiah(Math.abs(info.getIncome() - info.getOutcome()));
 
         // Check remainder is minus or no
-        if (outcome > income) {
+        if (info.getOutcome() > info.getIncome()) {
             // Remainder is minus
             remainderString = "-" + remainderString;
             binding.cardDashboard.tvRemainderAmount.setTextColor(ColorStateList.valueOf(requireContext().getColor(R.color.colorError)));
@@ -93,5 +100,14 @@ public class DashboardFragment extends BaseFragment implements DashboardView {
     public void onLoadLastTransaction(List<Transaction> transactions) {
         // Update list on category adapter
         adapter.setList(transactions);
+    }
+
+    private void setGreetings() {
+        String userName = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getDisplayName();
+        if (userName != null) {
+            binding.tvGreetingTitle.setText(getString(R.string.title_greet, FirebaseAuth.getInstance().getCurrentUser().getDisplayName()));
+        } else {
+            binding.tvGreetingTitle.setText(getString(R.string.title_greet_alt));
+        }
     }
 }

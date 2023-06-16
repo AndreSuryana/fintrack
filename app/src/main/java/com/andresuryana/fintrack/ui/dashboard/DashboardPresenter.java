@@ -2,6 +2,7 @@ package com.andresuryana.fintrack.ui.dashboard;
 
 import android.content.Context;
 
+import com.andresuryana.fintrack.data.model.DashboardInfo;
 import com.andresuryana.fintrack.data.model.Transaction;
 import com.andresuryana.fintrack.data.repository.Callback;
 import com.andresuryana.fintrack.data.repository.TransactionRepository;
@@ -39,7 +40,7 @@ public class DashboardPresenter {
                         }
                     }
 
-                    view.onLoadDashboardInfo(income, outcome);
+                    view.onLoadDashboardInfo(new DashboardInfo(income, outcome));
                 }
 
                 @Override
