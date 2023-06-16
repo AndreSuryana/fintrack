@@ -147,7 +147,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                             Transaction transaction = transactionSnapshot.getValue(Transaction.class);
                             if (transaction != null) {
                                 transaction.setUid(transactionSnapshot.getKey());
-                                transactions.add(transaction);
+                                transactions.add(0, transaction);
                             }
                         }
                         callback.onSuccess(transactions);
