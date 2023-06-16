@@ -50,6 +50,7 @@ public class TransactionFragment extends BaseFragment implements TransactionView
         // Setup refresh layout
         binding.getRoot().setOnRefreshListener(() -> {
             presenter.loadTransactions();
+            presenter.loadCategories();
             binding.getRoot().setRefreshing(false);
         });
 
