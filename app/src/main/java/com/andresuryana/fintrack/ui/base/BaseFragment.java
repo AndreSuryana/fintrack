@@ -1,32 +1,22 @@
 package com.andresuryana.fintrack.ui.base;
 
-import android.view.View;
-import android.widget.ProgressBar;
-
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.andresuryana.fintrack.R;
+import com.andresuryana.fintrack.ui.base.dialog.LoadingDialogFragment;
 import com.google.android.material.snackbar.Snackbar;
 
 public class BaseFragment extends Fragment implements BaseView {
 
-    // Progress bar
-    private ProgressBar progressBar;
-
     @Override
     public void showLoading() {
-        if (progressBar == null) {
-            progressBar = new ProgressBar(getActivity());
-        }
-        progressBar.setVisibility(View.VISIBLE);
+        LoadingDialogFragment.show(getParentFragmentManager());
     }
 
     @Override
     public void hideLoading() {
-        if (progressBar != null) {
-            progressBar.setVisibility(View.GONE);
-        }
+        LoadingDialogFragment.dismiss(getParentFragmentManager());
     }
 
     @Override

@@ -86,20 +86,24 @@ public class CategoryPresenter {
     }
 
     void loadCategories() {
+        view.showLoading();
         try {
             repository.getCategories(new Callback<List<Category>>() {
                 @Override
                 public void onSuccess(List<Category> result) {
                     view.showCategories(result);
+                    view.hideLoading();
                 }
 
                 @Override
                 public void onFailure(String message) {
                     view.showErrorMessage(message);
+                    view.hideLoading();
                 }
             });
         } catch (Exception e) {
             view.showErrorMessage(e.getMessage());
+            view.hideLoading();
         }
     }
 

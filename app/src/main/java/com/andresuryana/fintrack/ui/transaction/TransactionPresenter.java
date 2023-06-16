@@ -110,20 +110,24 @@ public class TransactionPresenter {
     }
 
     void loadTransactions() {
+        view.showLoading();
         try {
             repository.getTransactions(selectedCategory, new Callback<List<Transaction>>() {
                 @Override
                 public void onSuccess(List<Transaction> result) {
                     view.showTransactions(result);
+                    view.hideLoading();
                 }
 
                 @Override
                 public void onFailure(String message) {
                     view.showErrorMessage(message);
+                    view.hideLoading();
                 }
             });
         } catch (Exception e) {
             view.showErrorMessage(e.getMessage());
+            view.hideLoading();
         }
     }
 
