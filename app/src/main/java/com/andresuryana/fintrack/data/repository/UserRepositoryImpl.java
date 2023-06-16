@@ -1,15 +1,33 @@
 package com.andresuryana.fintrack.data.repository;
 
+import android.content.Context;
+
+import androidx.annotation.NonNull;
+
+import com.andresuryana.fintrack.data.model.DashboardInfo;
 import com.andresuryana.fintrack.data.model.User;
+import com.andresuryana.fintrack.data.prefs.SessionHelper;
+import com.andresuryana.fintrack.data.prefs.SessionHelperImpl;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class UserRepositoryImpl implements UserRepository {
 
+    private final DatabaseReference userRef;
     private final FirebaseAuth auth;
+    private final SessionHelper session;
 
-    public UserRepositoryImpl() {
+    public UserRepositoryImpl(Context context) {
+        this.session = new SessionHelperImpl(context);
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        this.userRef = db.getReference("users").child(session.getCurrentUserId());
+
         this.auth = FirebaseAuth.getInstance();
     }
 
@@ -79,6 +97,55 @@ public class UserRepositoryImpl implements UserRepository {
                             callback.onFailure(errorMessage);
                         }
                     });
+        } catch (Exception e) {
+            callback.onFailure(e.getMessage());
+        }
+    }
+
+    @Override
+    public void logout(AuthCallback callback) {
+        try {
+            // Perform logout from firebase auth
+            auth.signOut();
+
+            // Clear session
+            session.clearSession();
+        } catch (Exception e) {
+            callback.onFailure(e.getMessage());
+        }
+    }
+
+    @Override
+    public void getDashboardInfo(Callback<DashboardInfo> callback) {
+        try {
+            // Retrieve user info data
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        // Get values
+                        Long incomeValue = snapshot.child("income").getValue(Long.class);
+                        Long outcomeValue = snapshot.child("outcome").getValue(Long.class);
+
+                        // Parse values
+                        long income = incomeValue != null ? incomeValue : 0;
+                        long outcome = outcomeValue != null ? outcomeValue : 0;
+
+                        // Create dashboard info object
+                        DashboardInfo dashboardInfo = new DashboardInfo(income, outcome);
+
+                        callback.onSuccess(dashboardInfo);
+                    } else {
+                        callback.onFailure("No user info found");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    callback.onFailure(error.getMessage());
+                }
+            });
+
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
         }

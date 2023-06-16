@@ -19,4 +19,6 @@ public interface SessionHelper {
     String getCurrentUserId();
 
     void setCurrentUserId(String userId);
+
+    void clearSession();
 }

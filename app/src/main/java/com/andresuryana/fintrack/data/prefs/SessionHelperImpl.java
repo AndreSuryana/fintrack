@@ -61,4 +61,9 @@ public class SessionHelperImpl implements SessionHelper {
     public void setCurrentUserToken(String token) {
         prefs.edit().putString(KEY_USER_TOKEN, token).apply();
     }
+
+    @Override
+    public void clearSession() {
+        prefs.edit().clear().apply();
+    }
 }

@@ -7,6 +7,8 @@ import com.andresuryana.fintrack.data.model.Transaction;
 import com.andresuryana.fintrack.data.repository.Callback;
 import com.andresuryana.fintrack.data.repository.TransactionRepository;
 import com.andresuryana.fintrack.data.repository.TransactionRepositoryImpl;
+import com.andresuryana.fintrack.data.repository.UserRepository;
+import com.andresuryana.fintrack.data.repository.UserRepositoryImpl;
 
 import java.util.List;
 
@@ -14,38 +16,26 @@ public class DashboardPresenter {
 
     private final DashboardView view;
     private final TransactionRepository repository;
+    private final UserRepository userRepository;
 
 
     public DashboardPresenter(Context context, DashboardView view) {
         this.view = view;
         this.repository = new TransactionRepositoryImpl(context);
+        this.userRepository = new UserRepositoryImpl(context);
     }
 
     void loadDashboardInfo() {
-        // TODO: This is temporary, please update Firebase Database for this action
         try {
-            repository.getTransactions(null, new Callback<List<Transaction>>() {
+            userRepository.getDashboardInfo(new Callback<DashboardInfo>() {
                 @Override
-                public void onSuccess(List<Transaction> result) {
-                    // Define variable
-                    long income = 0;
-                    long outcome = 0;
-
-                    // Loop through transactions
-                    for (Transaction transaction : result) {
-                        if (transaction.getType() == Transaction.Type.INCOME) {
-                            income += transaction.getAmount();
-                        } else {
-                            outcome += transaction.getAmount();
-                        }
-                    }
-
-                    view.onLoadDashboardInfo(new DashboardInfo(income, outcome));
+                public void onSuccess(DashboardInfo result) {
+                    view.onLoadDashboardInfo(result);
                 }
 
                 @Override
                 public void onFailure(String message) {
-
+                    view.showErrorMessage(message);
                 }
             });
         } catch (Exception e) {
