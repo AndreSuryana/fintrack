@@ -24,7 +24,7 @@ import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
 
-    private final List<Transaction> categories;
+    private final List<Transaction> transactions;
     private final OnItemClickListener itemClickListener;
 
     public interface OnItemClickListener {
@@ -32,18 +32,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     }
 
     public TransactionAdapter(OnItemClickListener itemClickListener) {
-        this.categories = new ArrayList<>();
+        this.transactions = new ArrayList<>();
         this.itemClickListener = itemClickListener;
     }
 
-    public void setList(List<Transaction> categories) {
+    public void setList(List<Transaction> transactions) {
         // Calculate list differences
-        TransactionDiffCallback diffCallback = new TransactionDiffCallback(this.categories, categories);
+        TransactionDiffCallback diffCallback = new TransactionDiffCallback(this.transactions, transactions);
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
 
         // Update data
-        this.categories.clear();
-        this.categories.addAll(categories);
+        this.transactions.clear();
+        this.transactions.addAll(transactions);
 
         diffResult.dispatchUpdatesTo(this);
     }
@@ -57,12 +57,12 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull TransactionViewHolder holder, int position) {
-        holder.onBind(categories.get(position));
+        holder.onBind(transactions.get(position));
     }
 
     @Override
     public int getItemCount() {
-        return categories.size();
+        return transactions.size();
     }
 
     public class TransactionViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -101,7 +101,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         public void onClick(View v) {
             int position = getAdapterPosition();
             if (position != RecyclerView.NO_POSITION) {
-                Transaction transaction = categories.get(position);
+                Transaction transaction = transactions.get(position);
                 itemClickListener.onItemClick(transaction);
             }
         }

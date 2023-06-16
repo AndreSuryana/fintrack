@@ -13,6 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
     private final DatabaseReference transactionRef;
     private final String userId;
+
+    private static final int LAST_TRANSACTIONS_DEFAULT_SIZE = 10;
 
     public TransactionRepositoryImpl(Context context) {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -120,6 +123,45 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                     callback.onFailure(databaseError.getMessage());
                 }
             });
+        } catch (Exception e) {
+            callback.onFailure(e.getMessage());
+        }
+    }
+
+    @Override
+    public void getLastTransactions(Callback<List<Transaction>> callback) {
+        try {
+            // Specify current user transactions reference
+            DatabaseReference userTransactionRef = transactionRef.child(userId);
+
+            // Create query
+            Query query = userTransactionRef.orderByChild("timestamp").limitToLast(LAST_TRANSACTIONS_DEFAULT_SIZE);
+
+            // Retrieve the transactions data from the database
+            query.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        List<Transaction> transactions = new ArrayList<>();
+                        for (DataSnapshot transactionSnapshot : snapshot.getChildren()) {
+                            Transaction transaction = transactionSnapshot.getValue(Transaction.class);
+                            if (transaction != null) {
+                                transaction.setUid(transactionSnapshot.getKey());
+                                transactions.add(transaction);
+                            }
+                        }
+                        callback.onSuccess(transactions);
+                    } else {
+                        callback.onFailure("No last transactions found");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    callback.onFailure(error.getMessage());
+                }
+            });
+
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
         }

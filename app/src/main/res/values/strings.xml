@@ -15,6 +15,10 @@
     <string name="title_modify_category">Modify Category</string>
     <string name="title_add_transaction">Add Transaction</string>
     <string name="title_modify_transaction">Modify Transaction</string>
+    <string name="title_income">Income</string>
+    <string name="title_outcome">Outcome</string>
+    <string name="title_remainder">Remainder</string>
+    <string name="title_last_transaction">Last Transaction</string>
 
     <!-- Hint & Helper -->
     <string name="hint_user_name">Name</string>

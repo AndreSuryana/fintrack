@@ -16,4 +16,6 @@ public interface TransactionRepository {
     void updateTransaction(String transactionUid, Transaction transaction, Callback<Transaction> callback);
 
     void getTransactions(@Nullable Category category, Callback<List<Transaction>> callback);
+
+    void getLastTransactions(Callback<List<Transaction>> callback);
 }
