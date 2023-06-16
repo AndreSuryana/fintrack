@@ -21,6 +21,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.andresuryana.fintrack.R;
 import com.andresuryana.fintrack.data.model.Category;
@@ -230,8 +231,8 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
             binding.acTransactionType.setText(transaction.getType().toString());
             if (transaction.getType() == Transaction.Type.OUTCOME) {
                 // Only set category info if transaction type is OUTCOME
-                int categoryPosition = categoryAdapter.getPosition(getCategoryByUid(transaction.getCategoryName()));
-                Category category = categoryAdapter.getItem(categoryPosition);
+                int categoryPosition = categoryAdapter.getPosition(getCategoryByName(transaction.getCategoryName()));
+                Category category = categoryAdapter.getItem(categoryPosition == RecyclerView.NO_POSITION ? 0 : categoryPosition);
                 selectedCategory = category;
                 binding.acCategory.setText(category.getName());
             } else {
@@ -444,9 +445,9 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
         return true;
     }
 
-    private Category getCategoryByUid(String categoryUid) {
+    private Category getCategoryByName(String categoryName) {
         for (Category category : this.categories) {
-            if (category.getUid().equals(categoryUid)) {
+            if (category.getName().equals(categoryName)) {
                 return category;
             }
         }
