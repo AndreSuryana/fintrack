@@ -1,5 +1,7 @@
 package com.andresuryana.fintrack.ui.auth.login;
 
+import android.content.Context;
+
 import com.andresuryana.fintrack.data.model.User;
 import com.andresuryana.fintrack.data.prefs.SessionHelper;
 import com.andresuryana.fintrack.data.repository.UserRepository;
@@ -11,8 +13,8 @@ public class LoginPresenter {
     private final SessionHelper session;
     private final LoginView view;
 
-    public LoginPresenter(SessionHelper session, LoginView view) {
-        this.repository = new UserRepositoryImpl();
+    public LoginPresenter(Context context, SessionHelper session, LoginView view) {
+        this.repository = new UserRepositoryImpl(context);
         this.session = session;
         this.view = view;
     }

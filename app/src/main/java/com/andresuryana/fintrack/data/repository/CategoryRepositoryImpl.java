@@ -19,25 +19,21 @@ import java.util.List;
 public class CategoryRepositoryImpl implements CategoryRepository {
 
     private final DatabaseReference categoryRef;
-    private final String userId;
 
     public CategoryRepositoryImpl(Context context) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        this.categoryRef = db.getReference("categories");
-
         SessionHelper session = new SessionHelperImpl(context);
-        this.userId = session.getCurrentUserId();
+        String userId = session.getCurrentUserId();
+
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        this.categoryRef = db.getReference("users").child(userId).child("categories");
     }
 
 
     @Override
     public void addCategory(Category category, Callback<Category> callback) {
         try {
-            // Specify current user categories references
-            DatabaseReference userCategoryRef = categoryRef.child(userId);
-
             // Push new category into the references
-            userCategoryRef.push().getRef().setValue(category);
+            categoryRef.push().getRef().setValue(category);
 
             callback.onSuccess(category);
         } catch (Exception e) {
@@ -48,12 +44,9 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public void removeCategory(Category category, Callback<Category> callback) {
         try {
-            // Specify current user categories references
-            DatabaseReference userCategoryRef = categoryRef.child(userId);
-
             // Get and delete category references
-            DatabaseReference categoryRef = userCategoryRef.child(category.getUid());
-            categoryRef.removeValue((error, ref) -> {
+            DatabaseReference deleteCategoryRef = categoryRef.child(category.getUid());
+            deleteCategoryRef.removeValue((error, ref) -> {
                 if (error == null) {
                     // Category removed successfully
                     callback.onSuccess(category);
@@ -70,14 +63,11 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public void updateCategory(String categoryUid, Category category, Callback<Category> callback) {
         try {
-            // Specify current user categories reference
-            DatabaseReference userCategoryRef = categoryRef.child(userId);
-
             // Get the specific category reference
-            DatabaseReference categoryRef = userCategoryRef.child(categoryUid);
+            DatabaseReference updatedCategoryRef = categoryRef.child(categoryUid);
 
             // Update the category object in the database
-            categoryRef.setValue(category, (error, ref) -> {
+            updatedCategoryRef.setValue(category, (error, ref) -> {
                 if (error == null) {
                     // Category updated successfully
                     callback.onSuccess(category);
@@ -94,11 +84,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public void getCategories(Callback<List<Category>> callback) {
         try {
-            // Specify current user categories reference
-            DatabaseReference userCategoryRef = categoryRef.child(userId);
-
             // Retrieve the categories data from the database
-            userCategoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            categoryRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     List<Category> categories = new ArrayList<>();
@@ -127,11 +114,8 @@ public class CategoryRepositoryImpl implements CategoryRepository {
     @Override
     public void insertCategoriesForNewUser(String userId) {
         try {
-            // Specify current user categories references
-            DatabaseReference userCategoryRef = categoryRef.child(userId);
-
             // Push new category into the references
-            Category.getDefaultCategories().forEach(category -> userCategoryRef.push().getRef().setValue(category));
+            Category.getDefaultCategories().forEach(category -> categoryRef.push().getRef().setValue(category));
         } catch (Exception e) {
             e.printStackTrace();
         }

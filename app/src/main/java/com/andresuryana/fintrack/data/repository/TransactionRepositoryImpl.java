@@ -22,26 +22,22 @@ import java.util.List;
 public class TransactionRepositoryImpl implements TransactionRepository {
 
     private final DatabaseReference transactionRef;
-    private final String userId;
 
     private static final int LAST_TRANSACTIONS_DEFAULT_SIZE = 10;
 
     public TransactionRepositoryImpl(Context context) {
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        this.transactionRef = db.getReference("transactions");
-
         SessionHelper session = new SessionHelperImpl(context);
-        this.userId = session.getCurrentUserId();
+        String userId = session.getCurrentUserId();
+
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        this.transactionRef = db.getReference("users").child(userId).child("transactions");
     }
 
     @Override
     public void addTransaction(Transaction transaction, Callback<Transaction> callback) {
         try {
-            // Specify current user transactions references
-            DatabaseReference userTransactionRef = transactionRef.child(userId);
-
             // Push new transaction into the references
-            userTransactionRef.push().getRef().setValue(transaction);
+            transactionRef.push().getRef().setValue(transaction);
 
             callback.onSuccess(transaction);
         } catch (Exception e) {
@@ -52,12 +48,9 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public void removeTransaction(Transaction transaction, Callback<Transaction> callback) {
         try {
-            // Specify current user categories references
-            DatabaseReference userTransactionRef = transactionRef.child(userId);
-
             // Get and delete transaction references
-            DatabaseReference transactionRef = userTransactionRef.child(transaction.getUid());
-            transactionRef.removeValue((error, ref) -> {
+            DatabaseReference deleteTransactionRef = transactionRef.child(transaction.getUid());
+            deleteTransactionRef.removeValue((error, ref) -> {
                 if (error == null) {
                     // Transaction removed successfully
                     callback.onSuccess(transaction);
@@ -74,14 +67,11 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public void updateTransaction(String transactionUid, Transaction transaction, Callback<Transaction> callback) {
         try {
-            // Specify current user transactions reference
-            DatabaseReference userTransactionRef = transactionRef.child(userId);
-
             // Get the specific transaction reference
-            DatabaseReference transactionRef = userTransactionRef.child(transactionUid);
+            DatabaseReference updateTransactionRef = transactionRef.child(transactionUid);
 
             // Update the transaction object in the database
-            transactionRef.setValue(transaction, (error, ref) -> {
+            updateTransactionRef.setValue(transaction, (error, ref) -> {
                 if (error == null) {
                     // Transaction updated successfully
                     callback.onSuccess(transaction);
@@ -98,11 +88,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public void getTransactions(@Nullable Category category, Callback<List<Transaction>> callback) {
         try {
-            // Specify current user transactions reference
-            DatabaseReference userTransactionRef = transactionRef.child(userId);
-
             // Retrieve the transactions data from the database
-            userTransactionRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            transactionRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     List<Transaction> transactions = new ArrayList<>();
@@ -131,11 +118,8 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     @Override
     public void getLastTransactions(Callback<List<Transaction>> callback) {
         try {
-            // Specify current user transactions reference
-            DatabaseReference userTransactionRef = transactionRef.child(userId);
-
             // Create query
-            Query query = userTransactionRef.orderByChild("timestamp").limitToLast(LAST_TRANSACTIONS_DEFAULT_SIZE);
+            Query query = transactionRef.orderByChild("timestamp").limitToLast(LAST_TRANSACTIONS_DEFAULT_SIZE);
 
             // Retrieve the transactions data from the database
             query.addListenerForSingleValueEvent(new ValueEventListener() {

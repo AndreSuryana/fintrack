@@ -44,7 +44,7 @@ public class LoginFragment extends BaseFragment implements LoginView {
 
         // Init presenter
         SessionHelper session = new SessionHelperImpl(requireContext());
-        presenter = new LoginPresenter(session, this);
+        presenter = new LoginPresenter(requireContext(), session, this);
 
         // Get nav controller
         navController = Navigation.findNavController(requireActivity(), R.id.fragmentContainerView);

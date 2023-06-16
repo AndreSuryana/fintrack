@@ -18,7 +18,7 @@ public class RegisterPresenter {
     private final RegisterView view;
 
     public RegisterPresenter(Context context, RegisterView view) {
-        this.userRepository = new UserRepositoryImpl();
+        this.userRepository = new UserRepositoryImpl(context);
         this.categoryRepository = new CategoryRepositoryImpl(context);
         this.session = new SessionHelperImpl(context);
         this.view = view;
