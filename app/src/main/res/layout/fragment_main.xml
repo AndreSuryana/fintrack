@@ -35,9 +35,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
+        app:itemIconTint="@color/item_menu_background"
+        app:itemRippleColor="@color/colorPrimaryLight"
+        app:itemTextColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/main_menu" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_transaction"
+        android:layout_width="wrap_content"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/colorPrimary"
+        android:contentDescription="@string/btn_add_transaction"
+        android:src="@drawable/ic_add"
+        android:tint="@color/white"
+        android:translationY="28dp"
+        app:layout_anchor="@id/bottom_nav"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
+        app:layout_constraintEnd_toEndOf="@+id/bottom_nav"
+        app:layout_constraintStart_toStartOf="@+id/bottom_nav"
+        app:shapeAppearance="@style/ShapeAppearance.Material3.Corner.Full"
+        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

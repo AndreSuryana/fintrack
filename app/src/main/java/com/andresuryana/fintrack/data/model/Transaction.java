@@ -6,7 +6,7 @@ import com.google.firebase.database.ServerValue;
 
 import java.util.Date;
 
-public class Transaction {
+public class Transaction implements Comparable<Transaction> {
 
     private String uid;
     private Type type;
@@ -31,6 +31,11 @@ public class Transaction {
 //        this.categoryName = categoryName;
 //        this.categoryIconName = categoryIconName;
         this.timestamp = ServerValue.TIMESTAMP;
+    }
+
+    @Override
+    public int compareTo(Transaction other) {
+        return this.getDate().compareTo(other.getDate());
     }
 
     public enum Type {

@@ -12,7 +12,5 @@ public interface TransactionView extends BaseView {
 
     void onLoadCategories(List<Category> categories);
 
-    void showAddTransactionBottomSheet();
-
     void showModifyTransactionBottomSheet(Transaction transaction);
 }

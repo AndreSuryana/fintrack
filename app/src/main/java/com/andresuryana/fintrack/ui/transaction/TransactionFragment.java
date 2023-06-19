@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -62,14 +61,6 @@ public class TransactionFragment extends BaseFragment implements TransactionView
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        // Setup button
-        setupButton();
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
@@ -85,32 +76,10 @@ public class TransactionFragment extends BaseFragment implements TransactionView
 
     @Override
     public void onLoadCategories(List<Category> categories) {
-        // TODO: Update chip list here!
-
-
         // Store categories in Fragment
         this.categories = categories;
 
-        // Show add transaction button with fade animation
-        AlphaAnimation fadeInAnimation = new AlphaAnimation(0, 1);
-        fadeInAnimation.setDuration(100L);
-        binding.fabAddTransaction.setVisibility(View.VISIBLE);
-        binding.fabAddTransaction.startAnimation(fadeInAnimation);
-    }
-
-    @Override
-    public void showAddTransactionBottomSheet() {
-        // Check categories
-        if (categories == null) return;
-
-        // Show bottom sheet add transaction
-        TransactionFormBottomSheet addTransactionDialog = new TransactionFormBottomSheet(requireContext(), this.categories, (type, title, amount, category, date, notes) -> {
-            // Add transaction
-            presenter.addTransaction(type, title, amount, date, notes, category);
-        });
-        if (!addTransactionDialog.isVisible()) {
-            addTransactionDialog.show(getParentFragmentManager(), "AddTransactionBottomSheet");
-        }
+        // TODO: Update chip list here!
     }
 
     @Override
@@ -138,10 +107,5 @@ public class TransactionFragment extends BaseFragment implements TransactionView
         if (!modifyTransactionDialog.isVisible()) {
             modifyTransactionDialog.show(getParentFragmentManager(), "AddTransactionBottomSheet");
         }
-    }
-
-    private void setupButton() {
-        // Add button
-        binding.fabAddTransaction.setOnClickListener(v -> presenter.btnAddTransactionClicked());
     }
 }

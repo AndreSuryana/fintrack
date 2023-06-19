@@ -33,35 +33,6 @@ public class TransactionPresenter {
         this.categoryRepository = new CategoryRepositoryImpl(context);
     }
 
-    void addTransaction(Type type, String title, long amount, Date date, @Nullable String notes, Category category) {
-        try {
-            if (title.isEmpty() || amount == 0 || date == null) {
-                view.showErrorMessage(context.getString(R.string.error_check_input));
-            } else {
-                Transaction transaction = new Transaction(type, title, amount, date, notes);
-                if (category != null) {
-                    transaction.setCategoryIconName(category.getIconName());
-                    transaction.setCategoryName(category.getName());
-                }
-                repository.addTransaction(transaction, new Callback<Transaction>() {
-                    @Override
-                    public void onSuccess(Transaction result) {
-                        view.showMessage(context.getString(R.string.success_add_transaction, transaction.getTitle()));
-                        loadTransactions();
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        view.showErrorMessage(message);
-                    }
-                });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            view.showErrorMessage(e.getMessage());
-        }
-    }
-
     void updateTransaction(Transaction oldTransaction, Type type, String title, long amount, Date date, @Nullable String notes, Category category) {
         try {
             if (title.isEmpty() || amount == 0 || date == null) {
@@ -147,10 +118,6 @@ public class TransactionPresenter {
         } catch (Exception e) {
             view.showErrorMessage(e.getMessage());
         }
-    }
-
-    void btnAddTransactionClicked() {
-        view.showAddTransactionBottomSheet();
     }
 
     void onTransactionClicked(Transaction transaction) {

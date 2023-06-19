@@ -17,7 +17,10 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class TransactionRepositoryImpl implements TransactionRepository {
 
@@ -103,7 +106,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             transactionRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    List<Transaction> transactions = new ArrayList<>();
+                    SortedSet<Transaction> transactions = new TreeSet<>(Comparator.reverseOrder());
                     for (DataSnapshot transactionSnapshot : dataSnapshot.getChildren()) {
                         Transaction transaction = transactionSnapshot.getValue(Transaction.class);
                         if (transaction != null) {
@@ -112,7 +115,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                         }
                     }
                     // Categories retrieved successfully
-                    callback.onSuccess(transactions);
+                    callback.onSuccess(new ArrayList<>(transactions));
                 }
 
                 @Override
@@ -137,15 +140,15 @@ public class TransactionRepositoryImpl implements TransactionRepository {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.exists()) {
-                        List<Transaction> transactions = new ArrayList<>();
+                        SortedSet<Transaction> transactions = new TreeSet<>(Comparator.reverseOrder());
                         for (DataSnapshot transactionSnapshot : snapshot.getChildren()) {
                             Transaction transaction = transactionSnapshot.getValue(Transaction.class);
                             if (transaction != null) {
                                 transaction.setUid(transactionSnapshot.getKey());
-                                transactions.add(0, transaction);
+                                transactions.add(transaction);
                             }
                         }
-                        callback.onSuccess(transactions);
+                        callback.onSuccess(new ArrayList<>(transactions));
                     } else {
                         callback.onFailure("No last transactions found");
                     }
