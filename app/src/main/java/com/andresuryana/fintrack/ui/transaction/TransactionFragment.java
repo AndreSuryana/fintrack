@@ -104,6 +104,10 @@ public class TransactionFragment extends BaseFragment implements TransactionView
                 showErrorMessage(message);
             }
         });
+
+        // Add listener for adding new category
+        modifyTransactionDialog.setOnAddCategoryCallback((iconName, categoryName) -> presenter.addCategory(categoryName, iconName));
+
         if (!modifyTransactionDialog.isVisible()) {
             modifyTransactionDialog.show(getParentFragmentManager(), "AddTransactionBottomSheet");
         }

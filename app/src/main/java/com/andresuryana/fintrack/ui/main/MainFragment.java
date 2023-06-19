@@ -29,7 +29,11 @@ public class MainFragment extends BaseFragment implements MainView {
     // Presenter
     private MainPresenter presenter;
 
+    // Current categories
     private List<Category> categories;
+
+    // Bottom sheet dialog
+    private TransactionFormBottomSheet addTransactionDialog;
 
     public MainFragment() {
         // Required empty public constructor
@@ -73,7 +77,13 @@ public class MainFragment extends BaseFragment implements MainView {
 
     @Override
     public void onCategoriesLoaded(List<Category> categories) {
+        // Set categories
         this.categories = categories;
+
+        // Update dropdown category
+        if (addTransactionDialog != null) {
+            addTransactionDialog.setCategories(categories);
+        }
     }
 
     @Override
@@ -82,10 +92,14 @@ public class MainFragment extends BaseFragment implements MainView {
         if (categories == null) return;
 
         // Show bottom sheet add transaction
-        TransactionFormBottomSheet addTransactionDialog = new TransactionFormBottomSheet(requireContext(), this.categories, (type, title, amount, category, date, notes) -> {
+        addTransactionDialog = new TransactionFormBottomSheet(requireContext(), this.categories, (type, title, amount, category, date, notes) -> {
             // Add transaction
             presenter.addTransaction(type, title, amount, date, notes, category);
         });
+
+        // Add listener for adding new category
+        addTransactionDialog.setOnAddCategoryCallback((iconName, categoryName) -> presenter.addCategory(categoryName, iconName));
+
         if (!addTransactionDialog.isVisible()) {
             addTransactionDialog.show(getParentFragmentManager(), "AddTransactionBottomSheet");
         }

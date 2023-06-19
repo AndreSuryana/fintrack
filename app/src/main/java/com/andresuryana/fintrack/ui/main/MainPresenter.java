@@ -30,6 +30,30 @@ public class MainPresenter {
         this.transactionRepository = new TransactionRepositoryImpl(context);
     }
 
+    public void addCategory(String name, String iconName) {
+        try {
+            if (name.isEmpty()) {
+                view.showErrorMessage("Category name should not be empty");
+            } else {
+                Category category = new Category(name, iconName);
+                categoryRepository.addCategory(category, new Callback<Category>() {
+                    @Override
+                    public void onSuccess(Category result) {
+                        view.showMessage(context.getString(R.string.success_add_category, result.getName()));
+                        loadCategories();
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        view.showErrorMessage(message);
+                    }
+                });
+            }
+        } catch (Exception e) {
+            view.showErrorMessage(e.getMessage());
+        }
+    }
+
     public void loadCategories() {
         try {
             categoryRepository.getCategories(new Callback<List<Category>>() {
@@ -62,7 +86,6 @@ public class MainPresenter {
                     @Override
                     public void onSuccess(Transaction result) {
                         view.showMessage(context.getString(R.string.success_add_transaction, transaction.getTitle()));
-                        // TODO: Notify to the subscriber to refresh the list
                     }
 
                     @Override

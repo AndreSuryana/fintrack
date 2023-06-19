@@ -22,10 +22,10 @@ public class CategoryPresenter {
         this.repository = new CategoryRepositoryImpl(context);
     }
 
-    void addCategory(String name, String iconName) {
+    public void addCategory(String name, String iconName) {
         try {
             if (name.isEmpty()) {
-                view.showErrorMessage("Category name should not be empty");
+                view.showErrorMessage(context.getString(R.string.helper_empty_category_name));
             } else {
                 Category category = new Category(name, iconName);
                 repository.addCategory(category, new Callback<Category>() {

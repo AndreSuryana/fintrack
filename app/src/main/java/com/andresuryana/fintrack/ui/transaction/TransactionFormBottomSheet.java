@@ -27,6 +27,7 @@ import com.andresuryana.fintrack.R;
 import com.andresuryana.fintrack.data.model.Category;
 import com.andresuryana.fintrack.data.model.Transaction;
 import com.andresuryana.fintrack.databinding.BottomSheetAddTransactionBinding;
+import com.andresuryana.fintrack.ui.category.CategoryFormBottomSheet;
 import com.andresuryana.fintrack.util.StringUtil;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
@@ -53,11 +54,12 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
 
     // Current transaction (if available)
     private Transaction transaction;
-    private final List<Category> categories;
+    private List<Category> categories;
 
     // Callback
     private OnAddResultCallback onAddResultCallback;
     private OnModifyResultCallback onModifyResultCallback;
+    private OnAddCategoryCallback onAddCategoryCallback;
 
     // Constants
     private static final String DATE_PATTERN = "dd/mm/yyyy";
@@ -139,6 +141,9 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
 
         // Setup date picker
         setupDatePicker();
+
+        // Setup button
+        setupButton();
 
         // Check layout state
         switch (layoutState) {
@@ -269,11 +274,13 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
             // Hide category dropdown if type is INCOME
             if (selectedTransactionType == Transaction.Type.INCOME) {
                 binding.tilCategory.setVisibility(View.GONE);
+                binding.addCategoryContainer.setVisibility(View.GONE);
                 binding.tilCategory.setError(null);
                 binding.acCategory.setText("");
                 selectedCategory = null;
             } else {
                 binding.tilCategory.setVisibility(View.VISIBLE);
+                binding.addCategoryContainer.setVisibility(View.VISIBLE);
             }
 
             // Remove error
@@ -402,6 +409,22 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
         }));
     }
 
+    private void setupButton() {
+        // Button add category
+        binding.btnAddCategory.setOnClickListener((view) -> {
+            // Show bottom sheet add category
+            CategoryFormBottomSheet addCategoryDialog = new CategoryFormBottomSheet(requireContext(), (iconName, categoryName) -> {
+                // Add category
+                if (onAddCategoryCallback != null) {
+                    onAddCategoryCallback.onResult(iconName, categoryName);
+                }
+            });
+            if (!addCategoryDialog.isVisible()) {
+                addCategoryDialog.show(getParentFragmentManager(), "AddCategoryBottomSheet");
+            }
+        });
+    }
+
     private Category getCategoryByName(String categoryName) {
         for (Category category : this.categories) {
             if (category.getName().equals(categoryName)) {
@@ -451,6 +474,17 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
         }
     }
 
+    public void setOnAddCategoryCallback(OnAddCategoryCallback callback) {
+        this.onAddCategoryCallback = callback;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+        this.categoryAdapter.clear();
+        this.categoryAdapter.addAll(categories);
+        this.categoryAdapter.notifyDataSetChanged();
+    }
+
     public interface OnAddResultCallback {
         void onSuccess(Transaction.Type type, String title, long amount, @Nullable Category category, Date date, @Nullable String notes);
     }
@@ -461,6 +495,10 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
         void onDelete(Transaction transaction);
 
         void onFailed(String message);
+    }
+
+    public interface OnAddCategoryCallback {
+        void onResult(String iconName, String categoryName);
     }
 
     private interface OnInputValidationCallback {

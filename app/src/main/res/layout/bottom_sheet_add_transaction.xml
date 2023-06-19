@@ -71,6 +71,30 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <LinearLayout
+                android:id="@+id/add_category_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:isScrollContainer="false"
+                android:orientation="horizontal">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/prompt_transaction_category"
+                    android:textColor="@color/colorOnSecondary" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_add_category"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/btn_add_category" />
+
+            </LinearLayout>
+
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -125,10 +149,10 @@
                     android:id="@+id/et_transaction_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:focusable="false"
                     android:clickable="false"
                     android:drawableEnd="@drawable/ic_calendar"
                     android:drawableTint="#80000000"
+                    android:focusable="false"
                     android:hint="@string/hint_transaction_date"
                     android:inputType="none"
                     android:maxLines="1" />

@@ -84,5 +84,6 @@
     <string name="desc_transaction_type_icon">Transaction Type Icon</string>
     <string name="title_transaction_type">Transaction Type</string>
     <string name="title_transaction_detail">Transaction Detail</string>
+    <string name="prompt_transaction_category">Can\'t find a suitable category?\nConsidering to add your own category</string>
 
 </resources>
