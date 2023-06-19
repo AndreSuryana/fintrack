@@ -82,5 +82,7 @@
     <string name="desc_category_icon">Category Icon</string>
     <string name="desc_transaction_icon">Transaction Icon</string>
     <string name="desc_transaction_type_icon">Transaction Type Icon</string>
+    <string name="title_transaction_type">Transaction Type</string>
+    <string name="title_transaction_detail">Transaction Detail</string>
 
 </resources>
