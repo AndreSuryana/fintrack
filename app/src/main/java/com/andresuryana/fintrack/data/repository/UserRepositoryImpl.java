@@ -25,10 +25,14 @@ public class UserRepositoryImpl implements UserRepository {
 
     public UserRepositoryImpl(Context context) {
         this.session = new SessionHelperImpl(context);
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        this.userRef = db.getReference("users").child(session.getCurrentUserId());
-
         this.auth = FirebaseAuth.getInstance();
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+
+        if (session.isLoggedIn()) {
+            this.userRef = db.getReference("users").child(session.getCurrentUserId());
+        } else {
+            this.userRef = null;
+        }
     }
 
     @Override
