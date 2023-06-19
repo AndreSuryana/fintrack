@@ -78,16 +78,9 @@ public class CategoryFragment extends BaseFragment implements CategoryView {
     @Override
     public void showAddCategoryBottomSheet() {
         // Show bottom sheet add category
-        CategoryFormBottomSheet addCategoryDialog = new CategoryFormBottomSheet(requireContext(), new CategoryFormBottomSheet.OnAddResultCallback() {
-            @Override
-            public void onSuccess(String iconName, String categoryName) {
-                presenter.addCategory(categoryName, iconName);
-            }
-
-            @Override
-            public void onFailed(String message) {
-                showErrorMessage(message);
-            }
+        CategoryFormBottomSheet addCategoryDialog = new CategoryFormBottomSheet(requireContext(), (iconName, categoryName) -> {
+            // Add category
+            presenter.addCategory(categoryName, iconName);
         });
         if (!addCategoryDialog.isVisible()) {
             addCategoryDialog.show(getParentFragmentManager(), "AddCategoryBottomSheet");

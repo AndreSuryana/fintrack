@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -97,20 +98,12 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
 
         // Button add category
         binding.btnAddCategory.setOnClickListener(view -> {
-            // Check for error
-            boolean isCategoryNameError = binding.tilCategoryName.getError() != null;
-
-            // Get value
-            String iconName = iconAdapter.getItem(binding.spinnerIcon.getSelectedItemPosition()).first;
-            String categoryName = Objects.requireNonNull(binding.etCategoryName.getText()).toString();
-
-            if (!isCategoryNameError && iconName != null) {
+            // Validate input
+            validateInput((iconName, categoryName) -> {
+                // Return value
                 onAddResultCallback.onSuccess(iconName, categoryName);
                 dismiss();
-            } else {
-                onAddResultCallback.onFailed(getString(R.string.error_check_input));
-                dismiss();
-            }
+            });
         });
 
         // Hide modify button container
@@ -132,20 +125,12 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
 
         // Button edit category
         binding.btnEdit.setOnClickListener(view -> {
-            // Check for error
-            boolean isCategoryNameError = binding.tilCategoryName.getError() != null;
-
-            // Get value
-            String iconName = iconAdapter.getItem(binding.spinnerIcon.getSelectedItemPosition()).first;
-            String categoryName = Objects.requireNonNull(binding.etCategoryName.getText()).toString();
-
-            if (!isCategoryNameError && iconName != null) {
+            // Validate input
+            validateInput((iconName, categoryName) -> {
+                // Return value
                 onModifyResultCallback.onEdit(category, iconName, categoryName);
                 dismiss();
-            } else {
-                onModifyResultCallback.onFailed(getString(R.string.error_check_input));
-                dismiss();
-            }
+            });
         });
 
         // Button delete category
@@ -203,15 +188,36 @@ public class CategoryFormBottomSheet extends BottomSheetDialogFragment {
         });
     }
 
+    private void validateInput(OnInputValidationCallback callback) {
+        // Get value
+        String iconName = iconAdapter.getItem(binding.spinnerIcon.getSelectedItemPosition()).first;
+        String categoryName = Objects.requireNonNull(binding.etCategoryName.getText()).toString();
+
+        // Validation
+        if (iconName == null) {
+            Toast.makeText(requireContext(), getString(R.string.helper_empty_category_icon), Toast.LENGTH_SHORT).show();
+        } else if (categoryName.isEmpty() || binding.tilCategoryName.getError() != null) {
+            Toast.makeText(requireContext(), getString(R.string.error_check_input), Toast.LENGTH_SHORT).show();
+        } else {
+            // Input is valid
+            callback.onValid(iconName, categoryName);
+        }
+    }
+
     public interface OnAddResultCallback {
         void onSuccess(String iconName, String categoryName);
-        void onFailed(String message);
     }
 
     public interface OnModifyResultCallback {
         void onEdit(Category oldCategory, String iconName, String categoryName);
+
         void onDelete(Category category);
+
         void onFailed(String message);
+    }
+
+    private interface OnInputValidationCallback {
+        void onValid(String iconName, String categoryName);
     }
 
     private enum LayoutState {
