@@ -47,6 +47,9 @@
     <string name="helper_empty_transaction_title">Transaction title should not be empty</string>
     <string name="helper_invalid_transaction_title">The given title must not contains any number or special characters</string>
     <string name="helper_empty_category_icon">Icon for the category must be selected</string>
+    <string name="helper_empty_transaction_amount">Transaction amount should not be empty</string>
+    <string name="helper_transaction_amount_zero">Transaction amount cannot be 0</string>
+    <string name="helper_empty_transaction_date">Transaction date should not be empty</string>
 
     <!-- Button -->
     <string name="btn_register">Register</string>

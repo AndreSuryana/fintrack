@@ -11,13 +11,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -195,26 +195,12 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
 
         // Button add category
         binding.btnAddTransaction.setOnClickListener(view -> {
-            if (isInputValid() && isDropdownSelected()) {
-                // Get value
-                String title = Objects.requireNonNull(binding.etTransactionTitle.getText()).toString().trim();
-                String amountString = String.valueOf(parseRupiah(Objects.requireNonNull(binding.etTransactionAmount.getText()).toString()));
-                long amount = Long.parseLong(amountString);
-                Date date = parseDateString(Objects.requireNonNull(binding.etTransactionDate.getText()).toString(), DATE_PATTERN);
-                Editable notesText = binding.etTransactionNotes.getText();
-                String notes = notesText != null ? Objects.requireNonNull(notesText).toString() : null;
-
-                // If type is INCOME, selectedCategory must be null
-                if (selectedTransactionType == Transaction.Type.INCOME) {
-                    selectedCategory = null;
-                }
-
-                onAddResultCallback.onSuccess(selectedTransactionType, title, amount, selectedCategory, date, notes);
+            // Validate input
+            validateInput((type, title, amount, category, date, notes) -> {
+                // Return value
+                onAddResultCallback.onSuccess(type, title, amount, category, date, notes);
                 dismiss();
-            } else {
-                onAddResultCallback.onFailed(getString(R.string.error_check_input));
-                dismiss();
-            }
+            });
         });
 
         // Hide modify button container
@@ -250,27 +236,12 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
 
         // Button edit category
         binding.btnEdit.setOnClickListener(view -> {
-            if (isInputValid() && isDropdownSelected()) {
-                // Get value
-                String amountString = String.valueOf(parseRupiah(Objects.requireNonNull(binding.etTransactionAmount.getText()).toString()));
-                String dateString = Objects.requireNonNull(binding.etTransactionDate.getText()).toString();
-                String title = Objects.requireNonNull(binding.etTransactionTitle.getText()).toString().trim();
-                long amount = Long.parseLong(amountString);
-                Date date = parseDateString(dateString, DATE_PATTERN);
-                Editable notesText = binding.etTransactionNotes.getText();
-                String notes = notesText != null ? Objects.requireNonNull(notesText).toString() : null;
-
-                // If type is INCOME, selectedCategory must be null
-                if (selectedTransactionType == Transaction.Type.INCOME) {
-                    selectedCategory = null;
-                }
-
-                onModifyResultCallback.onEdit(transaction, selectedTransactionType, title, amount, selectedCategory, date, notes);
+            // Validate input
+            validateInput((type, title, amount, category, date, notes) -> {
+                // Return value
+                onModifyResultCallback.onEdit(transaction, type, title, amount, category, date, notes);
                 dismiss();
-            } else {
-                onModifyResultCallback.onFailed(getString(R.string.error_check_input));
-                dismiss();
-            }
+            });
         });
 
         // Button delete transaction
@@ -298,13 +269,16 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
             // Hide category dropdown if type is INCOME
             if (selectedTransactionType == Transaction.Type.INCOME) {
                 binding.tilCategory.setVisibility(View.GONE);
+                binding.tilCategory.setError(null);
+                binding.acCategory.setText("");
+                selectedCategory = null;
             } else {
                 binding.tilCategory.setVisibility(View.VISIBLE);
             }
 
             // Remove error
-            if (binding.acTransactionType.getError() != null) {
-                binding.acTransactionType.setError(null);
+            if (binding.tilTransactionType.getError() != null) {
+                binding.tilTransactionType.setError(null);
             }
         }));
 
@@ -315,8 +289,8 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
             selectedCategory = categoryAdapter.getItem(position);
 
             // Remove error
-            if (binding.acCategory.getError() != null) {
-                binding.acCategory.setError(null);
+            if (binding.tilCategory.getError() != null) {
+                binding.tilCategory.setError(null);
             }
         }));
     }
@@ -377,6 +351,13 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
                     amount = 0L;
                 }
 
+                // Check amount is not 0
+                if (amount == 0L) {
+                    binding.tilTransactionAmount.setError(getString(R.string.helper_transaction_amount_zero));
+                } else {
+                    binding.tilTransactionAmount.setError(null);
+                }
+
                 // Apply the maximum amount limit
                 String amountString = Long.toString(amount);
                 if (amountString.length() > 16) {
@@ -412,37 +393,13 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
     private void setupDatePicker() {
         // Show date picker on date input clicked
         binding.etTransactionDate.setOnClickListener(view -> showDatePickerDialog(requireContext(), (datePicker, year, month, dayOfMonth) -> {
-            Log.d(this.getClass().getSimpleName(), "setupDatePicker: clicked");
             // Set date into edit text
             Date date = getDate(year, month, dayOfMonth);
             binding.etTransactionDate.setText(formatDate(date, DATE_PATTERN));
+
+            // Remove errors
+            binding.tilTransactionDate.setError(null);
         }));
-    }
-
-    private boolean isInputValid() {
-        // Check for error
-        boolean isTypeValid = binding.tilTransactionType.getError() == null;
-        boolean isCategoryValid = selectedTransactionType == Transaction.Type.INCOME || binding.tilCategory.getError() == null;
-        boolean isTitleValid = binding.tilTransactionTitle.getError() == null;
-        boolean isAmountValid = binding.tilTransactionAmount.getError() == null;
-        boolean isDateValid = binding.tilTransactionDate.getError() == null;
-
-        return isTypeValid || isCategoryValid || isTitleValid || isAmountValid || isDateValid;
-    }
-
-    private boolean isDropdownSelected() {
-        // Check dropdown selection
-        if (selectedTransactionType == null) {
-            binding.tilTransactionType.setError(getString(R.string.helper_empty_transaction_type));
-            return false;
-        }
-        if (selectedTransactionType == Transaction.Type.OUTCOME) {
-            if (selectedCategory == null) {
-                binding.tilCategory.setError(getString(R.string.helper_empty_transaction_category));
-                return false;
-            }
-        }
-        return true;
     }
 
     private Category getCategoryByName(String categoryName) {
@@ -454,10 +411,48 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
         return null;
     }
 
+    private void validateInput(OnInputValidationCallback callback) {
+        // Get value
+        String title = Objects.requireNonNull(binding.etTransactionTitle.getText()).toString().trim();
+        String amountString = String.valueOf(parseRupiah(Objects.requireNonNull(binding.etTransactionAmount.getText()).toString()));
+        long amount = Long.parseLong(amountString);
+        String dateString = Objects.requireNonNull(binding.etTransactionDate.getText()).toString();
+        Date date = parseDateString(dateString, DATE_PATTERN);
+        Editable notesText = binding.etTransactionNotes.getText();
+        String notes = notesText != null ? Objects.requireNonNull(notesText).toString() : null;
+
+        // Check for error
+        boolean isTitleError = binding.tilTransactionTitle.getError() != null;
+        boolean isAmountError = binding.tilTransactionAmount.getError() != null;
+        boolean isDateError = binding.tilTransactionDate.getError() != null;
+
+        // Validation
+        if (selectedTransactionType == null) {
+            binding.tilTransactionType.setError(getString(R.string.helper_empty_transaction_type));
+            binding.tilTransactionType.requestFocus();
+        } else if (selectedTransactionType == Transaction.Type.OUTCOME && selectedCategory == null) {
+            binding.tilCategory.setError(getString(R.string.helper_empty_transaction_category));
+            binding.tilCategory.requestFocus();
+        } else if (title.isEmpty() || isTitleError) {
+            binding.tilTransactionTitle.setError(getString(R.string.helper_empty_transaction_title));
+            binding.tilTransactionTitle.requestFocus();
+            Toast.makeText(requireContext(), getString(R.string.error_check_input), Toast.LENGTH_SHORT).show();
+        } else if (amountString.isEmpty() || amount == 0 || isAmountError) {
+            binding.tilTransactionAmount.setError(getString(R.string.helper_empty_transaction_amount));
+            binding.tilTransactionAmount.requestFocus();
+            Toast.makeText(requireContext(), getString(R.string.error_check_input), Toast.LENGTH_SHORT).show();
+        } else if (dateString.isEmpty() || date == null || isDateError) {
+            binding.tilTransactionDate.setError(getString(R.string.helper_empty_transaction_date));
+            binding.tilTransactionDate.requestFocus();
+            Toast.makeText(requireContext(), getString(R.string.error_check_input), Toast.LENGTH_SHORT).show();
+        } else {
+            // Input is valid
+            callback.onValid(selectedTransactionType, title, amount, selectedCategory, date, notes);
+        }
+    }
+
     public interface OnAddResultCallback {
         void onSuccess(Transaction.Type type, String title, long amount, @Nullable Category category, Date date, @Nullable String notes);
-
-        void onFailed(String message);
     }
 
     public interface OnModifyResultCallback {
@@ -466,6 +461,10 @@ public class TransactionFormBottomSheet extends BottomSheetDialogFragment {
         void onDelete(Transaction transaction);
 
         void onFailed(String message);
+    }
+
+    private interface OnInputValidationCallback {
+        void onValid(Transaction.Type type, String title, long amount, @Nullable Category category, Date date, @Nullable String notes);
     }
 
     private enum LayoutState {

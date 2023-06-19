@@ -104,16 +104,9 @@ public class TransactionFragment extends BaseFragment implements TransactionView
         if (categories == null) return;
 
         // Show bottom sheet add transaction
-        TransactionFormBottomSheet addTransactionDialog = new TransactionFormBottomSheet(requireContext(), this.categories, new TransactionFormBottomSheet.OnAddResultCallback() {
-            @Override
-            public void onSuccess(Transaction.Type type, String title, long amount, @Nullable Category category, Date date, @Nullable String notes) {
-                presenter.addTransaction(type, title, amount, date, notes, category);
-            }
-
-            @Override
-            public void onFailed(String message) {
-                showErrorMessage(message);
-            }
+        TransactionFormBottomSheet addTransactionDialog = new TransactionFormBottomSheet(requireContext(), this.categories, (type, title, amount, category, date, notes) -> {
+            // Add transaction
+            presenter.addTransaction(type, title, amount, date, notes, category);
         });
         if (!addTransactionDialog.isVisible()) {
             addTransactionDialog.show(getParentFragmentManager(), "AddTransactionBottomSheet");
