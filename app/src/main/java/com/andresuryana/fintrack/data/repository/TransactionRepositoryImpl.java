@@ -22,6 +22,7 @@ import java.util.List;
 public class TransactionRepositoryImpl implements TransactionRepository {
 
     private final DatabaseReference transactionRef;
+    private final DatabaseReference userRef;
 
     private static final int LAST_TRANSACTIONS_DEFAULT_SIZE = 10;
 
@@ -30,6 +31,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         String userId = session.getCurrentUserId();
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
+        this.userRef = db.getReference("users").child(userId);
         this.transactionRef = db.getReference("users").child(userId).child("transactions");
     }
 
@@ -38,6 +40,9 @@ public class TransactionRepositoryImpl implements TransactionRepository {
         try {
             // Push new transaction into the references
             transactionRef.push().getRef().setValue(transaction);
+
+            // Update income/outcome
+            updateIncomeAndOutcome(transaction.getType(), transaction.getAmount());
 
             callback.onSuccess(transaction);
         } catch (Exception e) {
@@ -52,6 +57,9 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             DatabaseReference deleteTransactionRef = transactionRef.child(transaction.getUid());
             deleteTransactionRef.removeValue((error, ref) -> {
                 if (error == null) {
+                    // Update income/outcome
+                    updateIncomeAndOutcome(transaction.getType(), transaction.getAmount());
+
                     // Transaction removed successfully
                     callback.onSuccess(transaction);
                 } else {
@@ -73,6 +81,9 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             // Update the transaction object in the database
             updateTransactionRef.setValue(transaction, (error, ref) -> {
                 if (error == null) {
+                    // Update income/outcome
+                    updateIncomeAndOutcome(transaction.getType(), transaction.getAmount());
+
                     // Transaction updated successfully
                     callback.onSuccess(transaction);
                 } else {
@@ -148,6 +159,64 @@ public class TransactionRepositoryImpl implements TransactionRepository {
 
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
+        }
+    }
+
+    /**
+     * Function to update the amount of "income" or "outcome"
+     * from the current user
+     */
+    private void updateIncomeAndOutcome(Transaction.Type type, long amount) {
+        try {
+            if (type == Transaction.Type.INCOME) {
+                // Get income ref
+                DatabaseReference incomeRef = userRef.child("income").getRef();
+
+                // Proceed update income
+                incomeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Update income
+                            Long currentIncome = snapshot.getValue(Long.class);
+                            incomeRef.setValue(currentIncome != null ? currentIncome + amount : amount);
+                        } else {
+                            // There is no income field
+                            incomeRef.setValue(amount);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        error.toException().printStackTrace();
+                    }
+                });
+            } else {
+                // Get outcome ref
+                DatabaseReference outcomeRef = userRef.child("outcome").getRef();
+
+                // Proceed update outcome
+                outcomeRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // Update outcome
+                            Long currentOutcome = snapshot.getValue(Long.class);
+                            outcomeRef.setValue(currentOutcome != null ? currentOutcome + amount : amount);
+                        } else {
+                            // There is no outcome field
+                            outcomeRef.setValue(amount);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        error.toException().printStackTrace();
+                    }
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
