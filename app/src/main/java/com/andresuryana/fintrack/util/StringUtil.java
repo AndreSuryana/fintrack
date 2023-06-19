@@ -34,6 +34,8 @@ public class StringUtil {
     }
 
     public static long parseRupiah(String rupiah) {
+        if (rupiah.isEmpty()) return 0;
+
         // Remove non-numeric characters from the input string
         String amount = rupiah.replaceAll("[^\\d]", "");
 
