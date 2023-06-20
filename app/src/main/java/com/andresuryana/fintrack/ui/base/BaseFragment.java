@@ -9,14 +9,19 @@ import com.google.android.material.snackbar.Snackbar;
 
 public class BaseFragment extends Fragment implements BaseView {
 
+    // Loading dialog
+    private LoadingDialogFragment loadingDialog;
+
     @Override
     public void showLoading() {
-        LoadingDialogFragment.show(getParentFragmentManager());
+        if (loadingDialog == null)
+            loadingDialog = new LoadingDialogFragment(getParentFragmentManager(), getClass().getSimpleName());
+        loadingDialog.show();
     }
 
     @Override
     public void hideLoading() {
-        LoadingDialogFragment.dismiss(getParentFragmentManager());
+        if (loadingDialog != null) loadingDialog.dismiss();
     }
 
     @Override

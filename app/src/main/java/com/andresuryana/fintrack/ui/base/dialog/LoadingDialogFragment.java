@@ -15,19 +15,21 @@ public class LoadingDialogFragment extends AppCompatDialogFragment {
     // Layout binding
     private FragmentLoadingDialogBinding binding;
 
-    private static final String TAG = "LoadingDialogFragment";
+    private final FragmentManager fragmentManager;
+    private final String tag;
 
-    public static void show(FragmentManager fragmentManager) {
-        LoadingDialogFragment dialog = new LoadingDialogFragment();
-        dialog.setCancelable(false);
-        dialog.show(fragmentManager, TAG);
+    public LoadingDialogFragment(FragmentManager fragmentManager, String tag) {
+        this.fragmentManager = fragmentManager;
+        this.tag = tag + "Loading";
     }
 
-    public static void dismiss(FragmentManager fragmentManager) {
-        LoadingDialogFragment dialog = (LoadingDialogFragment) fragmentManager.findFragmentByTag(TAG);
-        if (dialog != null) {
-            dialog.dismissAllowingStateLoss();
-        }
+    public void show() {
+        this.setCancelable(false);
+        this.show(fragmentManager, tag);
+    }
+
+    public void dismiss() {
+        this.dismissAllowingStateLoss();
     }
 
     @NonNull
