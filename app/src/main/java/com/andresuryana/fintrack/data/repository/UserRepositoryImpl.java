@@ -8,6 +8,7 @@ import com.andresuryana.fintrack.data.model.DashboardInfo;
 import com.andresuryana.fintrack.data.model.User;
 import com.andresuryana.fintrack.data.prefs.SessionHelper;
 import com.andresuryana.fintrack.data.prefs.SessionHelperImpl;
+import com.andresuryana.fintrack.util.StringUtil;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -16,6 +17,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.Objects;
 
 public class UserRepositoryImpl implements UserRepository {
 
@@ -107,13 +110,15 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void logout(AuthCallback callback) {
+    public void logout(Callback<Boolean> callback) {
         try {
             // Perform logout from firebase auth
             auth.signOut();
 
             // Clear session
             session.clearSession();
+
+            callback.onSuccess(true);
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
         }
@@ -150,6 +155,46 @@ public class UserRepositoryImpl implements UserRepository {
                 }
             });
 
+        } catch (Exception e) {
+            callback.onFailure(e.getMessage());
+        }
+    }
+
+    @Override
+    public void getUser(Callback<User> callback) {
+        try {
+            // Retrieve user with firebase auth
+            FirebaseUser currentUser = auth.getCurrentUser();
+
+            if (currentUser != null) {
+                // Map user into the model
+                User user = new User();
+                user.setUserId(currentUser.getUid());
+                user.setName(currentUser.getDisplayName());
+                user.setEmail(currentUser.getEmail());
+                user.setImageUrl(StringUtil.getProfileImageUrl(currentUser.getDisplayName()));
+
+                callback.onSuccess(user);
+            }
+        } catch (Exception e) {
+            callback.onFailure(e.getMessage());
+        }
+    }
+
+    @Override
+    public void forgotPassword(Callback<Boolean> callback) {
+        try {
+            // Retrieve user with firebase auth
+            FirebaseUser currentUser = auth.getCurrentUser();
+
+            // Request password reset
+            if (currentUser != null) {
+                auth.sendPasswordResetEmail(Objects.requireNonNull(currentUser.getEmail()))
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) callback.onSuccess(true);
+                            else callback.onFailure(Objects.requireNonNull(task.getException()).getMessage());
+                        });
+            }
         } catch (Exception e) {
             callback.onFailure(e.getMessage());
         }

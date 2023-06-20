@@ -9,9 +9,13 @@ public interface UserRepository {
 
     void register(User user, final AuthCallback callback);
 
-    void logout(final AuthCallback callback);
+    void logout(Callback<Boolean> callback);
 
     void getDashboardInfo(Callback<DashboardInfo> callback);
+
+    void getUser(Callback<User> callback);
+
+    void forgotPassword(Callback<Boolean> callback);
 
     interface AuthCallback {
 

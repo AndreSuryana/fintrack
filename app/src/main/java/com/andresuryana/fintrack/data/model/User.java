@@ -7,8 +7,14 @@ public class User {
     private String email;
     private String password;
     private String token;
+    private String imageUrl;
+
+    public User() {
+        // Default constructor
+    }
 
     public User(String userId, String name, String email, String password) {
+        this.userId = userId;
         this.name = name;
         this.email = email;
         this.password = password;
@@ -60,5 +66,13 @@ public class User {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
