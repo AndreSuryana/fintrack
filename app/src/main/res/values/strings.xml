@@ -22,6 +22,12 @@
     <string name="title_greet">Hi %s!</string>
     <string name="title_greet_alt">Hello!</string>
     <string name="subtitle_greet">Take control of your financial journey now</string>
+    <string name="title_transaction_type">Transaction Type</string>
+    <string name="title_transaction_detail">Transaction Detail</string>
+    <string name="title_personal_data">Personal Data</string>
+    <string name="title_forgot_password">Forgot Password</string>
+    <string name="title_logout">Logout</string>
+    <string name="title_account_setting">Account Setting</string>
 
     <!-- Hint & Helper -->
     <string name="hint_user_name">Name</string>
@@ -73,17 +79,23 @@
     <string name="success_add_transaction">You have successfully added a new transaction \'%s\'</string>
     <string name="success_update_transaction">You have successfully updated the \'%s\' transaction</string>
     <string name="success_remove_transaction">You have successfully removed the transaction \'%s\'</string>
+    <string name="success_logout">Logout successfully</string>
+    <string name="success_request_forgot_password">Password reset instructions sent to your email</string>
 
     <string name="error_check_input">Please check your input</string>
     <string name="error_category_not_found">Category not found</string>
     <string name="error_transaction_not_found">Transaction not found</string>
+    <string name="error_request_forgot_password">Failed to request password reset</string>
 
     <!-- Content Description -->
     <string name="desc_category_icon">Category Icon</string>
     <string name="desc_transaction_icon">Transaction Icon</string>
     <string name="desc_transaction_type_icon">Transaction Type Icon</string>
-    <string name="title_transaction_type">Transaction Type</string>
-    <string name="title_transaction_detail">Transaction Detail</string>
+    <string name="desc_setting_icon">Setting Icon</string>
+
+    <!-- Prompt -->
     <string name="prompt_transaction_category">Can\'t find a suitable category?\nConsidering to add your own category</string>
+    <string name="title_manage_category">Manage Category</string>
+    <string name="title_manage">Manage</string>
 
 </resources>
