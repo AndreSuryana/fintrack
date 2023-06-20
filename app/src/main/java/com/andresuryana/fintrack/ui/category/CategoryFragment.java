@@ -41,10 +41,13 @@ public class CategoryFragment extends BaseFragment implements CategoryView {
         adapter = new CategoryAdapter(category -> presenter.onCategoryClicked(category));
         binding.rvCategories.setAdapter(adapter);
 
+        // Setup back button
+        binding.toolbar.setNavigationOnClickListener((view) -> getNavController().popBackStack());
+
         // Setup refresh layout
-        binding.getRoot().setOnRefreshListener(() -> {
+        binding.refreshLayout.setOnRefreshListener(() -> {
             presenter.loadCategories();
-            binding.getRoot().setRefreshing(false);
+            binding.refreshLayout.setRefreshing(false);
         });
 
         // Request data
