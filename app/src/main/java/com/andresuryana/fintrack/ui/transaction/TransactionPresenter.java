@@ -43,7 +43,7 @@ public class TransactionPresenter {
                     transaction.setCategoryIconName(category.getIconName());
                     transaction.setCategoryName(category.getName());
                 }
-                repository.updateTransaction(oldTransaction.getUid(), transaction, new Callback<Transaction>() {
+                repository.updateTransaction(oldTransaction, transaction, new Callback<Transaction>() {
                     @Override
                     public void onSuccess(Transaction result) {
                         view.showMessage(context.getString(R.string.success_add_transaction, transaction.getTitle()));

@@ -61,7 +61,7 @@ public class TransactionRepositoryImpl implements TransactionRepository {
             deleteTransactionRef.removeValue((error, ref) -> {
                 if (error == null) {
                     // Update income/outcome
-                    updateIncomeAndOutcome(transaction.getType(), transaction.getAmount());
+                    updateIncomeAndOutcome(transaction.getType(), -transaction.getAmount());
 
                     // Transaction removed successfully
                     callback.onSuccess(transaction);
@@ -76,16 +76,27 @@ public class TransactionRepositoryImpl implements TransactionRepository {
     }
 
     @Override
-    public void updateTransaction(String transactionUid, Transaction transaction, Callback<Transaction> callback) {
+    public void updateTransaction(Transaction oldTransaction, Transaction transaction, Callback<Transaction> callback) {
         try {
             // Get the specific transaction reference
-            DatabaseReference updateTransactionRef = transactionRef.child(transactionUid);
+            DatabaseReference updateTransactionRef = transactionRef.child(oldTransaction.getUid());
 
             // Update the transaction object in the database
             updateTransactionRef.setValue(transaction, (error, ref) -> {
                 if (error == null) {
+                    // Get amount difference
+                    long amount;
+                    if (oldTransaction.getAmount() < transaction.getAmount()) {
+                        amount = oldTransaction.getAmount() - transaction.getAmount();
+                    } else if (oldTransaction.getAmount() > transaction.getAmount()) {
+                        amount = transaction.getAmount() - oldTransaction.getAmount();
+                    } else {
+                        // If transaction amount are equals
+                        amount = transaction.getAmount();
+                    }
+
                     // Update income/outcome
-                    updateIncomeAndOutcome(transaction.getType(), transaction.getAmount());
+                    updateIncomeAndOutcome(transaction.getType(), amount);
 
                     // Transaction updated successfully
                     callback.onSuccess(transaction);

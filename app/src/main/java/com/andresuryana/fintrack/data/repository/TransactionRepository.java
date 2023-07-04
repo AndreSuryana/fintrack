@@ -13,7 +13,7 @@ public interface TransactionRepository {
 
     void removeTransaction(Transaction transaction, Callback<Transaction> callback);
 
-    void updateTransaction(String transactionUid, Transaction transaction, Callback<Transaction> callback);
+    void updateTransaction(Transaction oldTransaction, Transaction transaction, Callback<Transaction> callback);
 
     void getTransactions(@Nullable Category category, Callback<List<Transaction>> callback);
 
